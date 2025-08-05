@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Tsinjo - Fonds d'urgence HEI</title>
+    <style>
+        .donation { margin-bottom: 20px; padding: 10px; border: 1px solid #ddd; }
+        .help { margin-bottom: 20px; padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9; }
+        .verifying { color: orange; }
+        .succeeded { color: green; }
+        .failed { color: red; }
+    </style>
+</head>
+<body>
+<h1>Tsinjo - Solidarité HEI</h1>
+
+<h2>Faire un don</h2>
+<form action="/donate" method="post">
+    <div>
+        <label>Nom complet:</label>
+        <input type="text" name="fullName" required>
+    </div>
+    <div>
+        <label>Email:</label>
+        <input type="email" name="email" required>
+    </div>
+    <div>
+        <label>ID Transaction Orange Money:</label>
+        <input type="text" name="pspPaymentId" required>
+    </div>
+    <button type="submit">Soumettre le don</button>
+</form>
+
+<h2>Historique des dons</h2>
+<div th:each="donation : ${donations}">
+    <div class="donation">
+        <h3 th:text="'Don de ' + ${donation.donor.fullName}"></h3>
+        <p>Email: <span th:text="${donation.donor.email}"></span></p>
+        <p>Montant: <span th:text="${donation.payment.amount}"></span> Ar</p>
+        <p>Date: <span th:text="${#temporals.format(donation.payment.date, 'dd/MM/yyyy HH:mm')}"></span></p>
+        <p>Statut:
+            <span class="verifying" th:if="${donation.payment.status == 'VERIFYING'}">En vérification</span>
+            <span class="succeeded" th:if="${donation.payment.status == 'SUCCEEDED'}">Confirmé</span>
+            <span class="failed" th:if="${donation.payment.status == 'FAILED'}">Échoué</span>
+        </p>
+    </div>
+</div>
+
+<h2>Aides distribuées</h2>
+<div th:each="help : ${helps}">
+    <div class="help">
+        <h3 th:text="'Aide pour ' + ${help.beneficiary.fullName}"></h3>
+        <p>Email: <span th:text="${help.beneficiary.email}"></span></p>
+        <p>Montant: <span th:text="${help.payment.amount}"></span> Ar</p>
+        <p>Date: <span th:text="${#temporals.format(help.payment.date, 'dd/MM/yyyy HH:mm')}"></span></p>
+        <p>Motif: <span th:text="${help.accidentDescription}"></span></p>
+    </div>
+</div>
+</body>
+</html>
